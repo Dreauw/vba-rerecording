@@ -63,6 +63,7 @@ ON_BN_CLICKED(IDC_REFRESH, OnRefresh)
 ON_BN_CLICKED(IDC_THUMB, OnThumb)
 ON_WM_VSCROLL()
 //}}AFX_MSG_MAP
+ON_BN_CLICKED(IDC_NEXT2, &Disassemble::OnNextFrame)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -120,28 +121,10 @@ void Disassemble::OnGopc()
 
 void Disassemble::OnNext()
 {
-	CPULoop(1);
-	if (armState)
-	{
-		u32 total = address+count*4;
-		if (armNextPC >= address && armNextPC < total)
-		{}
-		else
-		{
-			OnGopc();
-		}
-	}
-	else
-	{
-		u32 total = address+count*2;
-		if (armNextPC >= address && armNextPC < total)
-		{}
-		else
-		{
-			OnGopc();
-		}
-	}
-	refresh();
+	//CPULoop(1);
+	CPUExecuteOpcodes(1, 1);
+
+	refreshPosition();
 }
 
 void Disassemble::OnRefresh()
@@ -164,6 +147,7 @@ BOOL Disassemble::OnInitDialog()
 	DIALOG_SIZER_ENTRY(IDC_REFRESH, DS_MoveY)
 	DIALOG_SIZER_ENTRY(IDC_CLOSE, DS_MoveY)
 	DIALOG_SIZER_ENTRY(IDC_NEXT,  DS_MoveY)
+	DIALOG_SIZER_ENTRY(IDC_NEXT2, DS_MoveY)
 	DIALOG_SIZER_ENTRY(IDC_AUTO_UPDATE, DS_MoveY)
 	DIALOG_SIZER_ENTRY(IDC_GOPC, DS_MoveY)
 	DIALOG_SIZER_ENTRY(IDC_VSCROLL, DS_SizeY)
@@ -340,3 +324,48 @@ void Disassemble::PostNcDestroy()
 	delete this;
 }
 
+void Disassemble::refreshPosition()
+{
+
+	if (armState)
+	{
+		u32 total = address + count * 4;
+		if (!(armNextPC >= address && armNextPC < total))
+		{
+			OnGopc();
+		}
+	}
+	else
+	{
+		u32 total = address + count * 2;
+		if (!(armNextPC >= address && armNextPC < total))
+		{
+			OnGopc();
+		}
+	}
+	refresh();
+}
+
+
+void Disassemble::OnNextFrame()
+{
+	CPULoop(1);
+	refreshPosition();
+}
+
+
+BOOL Disassemble::PreTranslateMessage(MSG* pMsg)
+{
+	if (pMsg->message == WM_KEYDOWN)
+	{
+		if (pMsg->wParam == VK_F6)
+		{
+			OnNext();
+		}
+		else if (pMsg->wParam == VK_F7)
+		{ 
+			OnNextFrame();
+		}
+	}
+	return __super::PreTranslateMessage(pMsg);
+}

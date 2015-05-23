@@ -23,6 +23,7 @@ typedef union
 
 bool gbLoadRom(const char *);
 void gbEmulate(int);
+void gbExecuteOpcodes(int, int);
 void gbWriteMemory(register u16, register u8);
 void gbGetHardwareType();
 void gbInit();

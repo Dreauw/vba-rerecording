@@ -3805,6 +3805,11 @@ static inline void CPUFrameBoundaryWork()
 
 void CPULoop(int _ticks)
 {
+	CPUExecuteOpcodes(-1, _ticks);
+}
+
+void CPUExecuteOpcodes(int nbOpcodes, int _ticks)
+{
 	CPUBeforeEmulation();
 
 	int32 ticks = _ticks;
@@ -3821,8 +3826,9 @@ void CPULoop(int _ticks)
 #ifdef SDL
 	cpuBreakLoop = false;
 #endif
+	int i = 0;
 
-	for (;;)
+	for (;nbOpcodes < 0 || i < nbOpcodes; ++i)
 	{
 #ifndef FINAL_VERSION
 		if (systemDebug)

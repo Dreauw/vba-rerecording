@@ -5055,6 +5055,11 @@ static inline void gbFrameBoundaryWork()
 
 void gbEmulate(int ticksToStop)
 {
+	gbExecuteOpcodes(-1, ticksToStop);
+}
+
+void gbExecuteOpcodes(int nbOpcodes, int ticksToStop)
+{
 	gbBeforeEmulation();
 
 	gbRegister tempRegister;
@@ -5067,8 +5072,8 @@ void gbEmulate(int ticksToStop)
 	int	 opcode1 = 0;
 	int	 opcode2 = 0;
 	bool execute = false;
-
-	for (;;)
+	int i = 0;
+	for (; i < nbOpcodes || nbOpcodes < 0; ++i)
 	{
 #ifndef FINAL_VERSION
 		if (systemDebug)

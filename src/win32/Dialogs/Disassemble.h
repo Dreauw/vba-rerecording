@@ -64,6 +64,11 @@ protected:
 	afx_msg void OnVScroll(UINT nSBCode, UINT nPos, CScrollBar*pScrollBar);
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
+public:
+	afx_msg void OnNextFrame();
+	virtual BOOL PreTranslateMessage(MSG* pMsg);
+private:
+	void refreshPosition();
 };
 
 //{{AFX_INSERT_LOCATION}}

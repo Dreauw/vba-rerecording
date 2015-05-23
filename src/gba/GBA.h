@@ -65,6 +65,7 @@ extern void CPULoadInternalBios();
 extern void CPUInit();
 extern void CPUReset();
 extern void CPULoop(int);
+extern void CPUExecuteOpcodes(int, int);
 extern void CPUCheckDMA(int, int);
 #ifdef PROFILING
 extern void cpuProfil(char *buffer, int, u32, int);

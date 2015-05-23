@@ -13,7 +13,7 @@
 #undef APSTUDIO_READONLY_SYMBOLS
 
 /////////////////////////////////////////////////////////////////////////////
-// English (United States) resources
+// Anglais (États-Unis) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
 LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
@@ -650,10 +650,10 @@ BEGIN
     GROUPBOX        "Sprite",IDC_STATIC,8,67,154,30
 END
 
-IDD_DISASSEMBLE DIALOG 0, 0, 402, 225
+IDD_DISASSEMBLE DIALOGEX 0, 0, 402, 225
 STYLE DS_SETFONT | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
 CAPTION "Disassemble"
-FONT 8, "MS Sans Serif"
+FONT 8, "MS Sans Serif", 0, 0, 0x0
 BEGIN
     CONTROL         "Automatic",IDC_AUTOMATIC,"Button",BS_AUTORADIOBUTTON | WS_GROUP,7,9,47,10
     CONTROL         "ARM",IDC_ARM,"Button",BS_AUTORADIOBUTTON,62,9,32,10
@@ -662,9 +662,9 @@ BEGIN
     DEFPUSHBUTTON   "Go",IDC_GO,232,7,50,14
     LISTBOX         IDC_DISASSEMBLE,7,25,276,161,LBS_SORT | LBS_NOINTEGRALHEIGHT | WS_TABSTOP
     CONTROL         "Automatic update",IDC_AUTO_UPDATE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,191,71,10
-    PUSHBUTTON      "Refresh",IDC_REFRESH,120,204,50,14
-    PUSHBUTTON      "Next",IDC_NEXT,233,204,50,14
-    PUSHBUTTON      "Close",IDC_CLOSE,346,204,50,14
+    PUSHBUTTON      "Refresh",IDC_REFRESH,64,204,50,14
+    PUSHBUTTON      "(F6) Next Instruction",IDC_NEXT,145,204,69,14
+    PUSHBUTTON      "Close",IDC_CLOSE,339,204,50,14
     LTEXT           "R0:",IDC_STATIC,309,7,18,8
     LTEXT           "R1:",IDC_STATIC,309,15,18,8
     LTEXT           "R2:",IDC_STATIC,309,23,18,8
@@ -710,6 +710,7 @@ BEGIN
     LTEXT           "",IDC_MODE,376,176,20,8
     SCROLLBAR       IDC_VSCROLL,283,25,10,161,SBS_VERT
     PUSHBUTTON      "Goto R15",IDC_GOPC,7,204,50,14
+    PUSHBUTTON      "(F7) Next Frame",IDC_NEXT2,219,204,64,14
 END
 
 IDD_GDB_PORT DIALOG 0, 0, 186, 51
@@ -2611,7 +2612,7 @@ BEGIN
     IDS_AUTOFIRE_LEFT       "turbo Left on"
 END
 
-#endif    // English (United States) resources
+#endif    // Anglais (États-Unis) resources
 /////////////////////////////////////////////////////////////////////////////
 
 
