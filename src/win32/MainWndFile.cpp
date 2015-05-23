@@ -14,6 +14,8 @@
 #include "Dialogs/ram_search.h"
 #include "Dialogs/ramwatch.h"
 
+#include <algorithm>
+
 #include "../NLS.h"
 #include "../version.h"
 #include "../gba/GBA.h"

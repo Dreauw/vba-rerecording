@@ -1,6 +1,6 @@
 //{{NO_DEPENDENCIES}}
-// Microsoft Visual C++ generated include file.
-// Used by VBA.rc
+// Fichier Include généré de Microsoft Visual C++.
+// Utilisé par VBA.rc
 //
 #define IDS_CANNOT_LOAD_SGM             2
 #define IDS_SAVE_GAME_NOT_USING_BIOS    3
@@ -273,6 +273,7 @@
 #define IDC_NEXT                        1021
 #define IDC_CONTINUE                    1022
 #define IDC_CHEAT_LIST                  1023
+#define IDC_NEXT2                       1023
 #define IDC_START                       1024
 #define IDC_SEARCH                      1025
 #define IDC_OLD_VALUE                   1026

@@ -3,6 +3,7 @@
 #include "stdafx.h"
 #include <mmsystem.h>
 #include <cassert>
+#include <algorithm>
 
 #include "resource.h"
 #include "VBA.h"

@@ -11,6 +11,7 @@
 #include <cassert>
 #include <windows.h>
 #include <string>
+#include <algorithm>
 
 /*
 #include <commctrl.h>
