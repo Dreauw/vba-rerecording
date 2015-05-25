@@ -40,6 +40,7 @@ MainWnd::MainWnd()
 {
 	m_hAccelTable = NULL;
 	arrow		  = LoadCursor(NULL, IDC_ARROW);
+	disassembleDlg = NULL;
 
 	InitDecoder();
 }

@@ -38,6 +38,12 @@ extern u8 freezePRAM[0x400];
 extern u8 freezeOAM[0x400];
 #endif
 
+// BreakPoints support
+#define MAX_BREAKPOINTS 32
+extern u32 nbBreakPoints;
+extern u32 breakPoints[MAX_BREAKPOINTS];
+extern bool hasHitBP;
+
 extern bool CPUReadGSASnapshot(const char *);
 extern bool CPUWriteGSASnapshot(const char *, const char *, const char *, const char *);
 extern bool CPUWriteBatteryFile(const char *);
@@ -67,6 +73,10 @@ extern void CPUReset();
 extern void CPULoop(int);
 extern void CPUExecuteOpcodes(int, int);
 extern void CPUCheckDMA(int, int);
+extern bool breakPointExist(u32);
+extern bool removeBreakPoint(u32);
+extern bool addBreakPoint(u32);
+
 #ifdef PROFILING
 extern void cpuProfil(char *buffer, int, u32, int);
 extern void cpuEnableProfiling(int hz);

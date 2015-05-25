@@ -86,6 +86,10 @@ u8	 freezeOAM[0x400];
 bool debugger_last;
 #endif
 
+u32 nbBreakPoints = 0;
+u32 breakPoints[MAX_BREAKPOINTS];
+bool hasHitBP = false;
+
 int32 lcdTicks = (useBios && !skipBios) ? 1008 : 208;
 u8	  timerOnOffDelay	= 0;
 u16	  timer0Value		= 0;
@@ -3808,6 +3812,50 @@ void CPULoop(int _ticks)
 	CPUExecuteOpcodes(-1, _ticks);
 }
 
+// Test if there's a BP at a specific address
+bool breakPointExist(u32 addr)
+{
+	for (u32 bpIdx = 0; bpIdx < nbBreakPoints; ++bpIdx) {
+		if (breakPoints[bpIdx] == addr)
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+bool removeBreakPoint(u32 addr)
+{
+	for (u32 bpIdx = 0; bpIdx < nbBreakPoints; ++bpIdx) 
+	{
+		// We search the breakpoint
+		if (breakPoints[bpIdx] == addr)
+		{
+			// Shift all the breakpoints after the one we want to remove to the left (to avoid gaps in the array)
+			for (u32 i = bpIdx; i < nbBreakPoints - 1; ++i)
+			{
+				breakPoints[i] = breakPoints[i + 1];
+			}
+			--nbBreakPoints;
+			return true;
+		}
+	}
+
+	// If the breakpoint wasn't found
+	return false;
+}
+
+bool addBreakPoint(u32 addr)
+{
+	if (nbBreakPoints >= MAX_BREAKPOINTS)
+	{
+		systemMessage(0, "Too many breakpoints");
+		return false;
+	}
+
+	breakPoints[nbBreakPoints++] = addr;
+}
+
 void CPUExecuteOpcodes(int nbOpcodes, int _ticks)
 {
 	CPUBeforeEmulation();
@@ -3892,6 +3940,22 @@ void CPUExecuteOpcodes(int nbOpcodes, int _ticks)
 			}
 		}
 #endif /* FINAL_VERSION */
+
+		// Break Points
+		// If there's a bp on the adress we're about to execute
+		if (breakPointExist(armNextPC)) {
+			if (hasHitBP)
+			{
+				// Break point already found, we can continue
+				hasHitBP = false;
+			}
+			else
+			{
+				// Inform that we're on a break point and cancel the execution
+				hasHitBP = true;
+				return;
+			}
+		}
 
 		if (!holdState && !SWITicks)
 		{

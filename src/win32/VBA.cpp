@@ -1116,6 +1116,15 @@ void VBA::saveRewindStateIfNecessary()
 	}
 }
 
+void VBA::openDisassemblerIfOnBreakPoint()
+{
+	if (hasHitBP) 
+	{
+		paused = true;
+		((MainWnd *)theApp.m_pMainWnd)->openToolsDisassemble(true);
+	}
+}
+
 BOOL VBA::OnIdle(LONG lCount)
 {
 	if (emulating && debugger)
@@ -1126,7 +1135,8 @@ BOOL VBA::OnIdle(LONG lCount)
 			return TRUE;  // continue loop
 		return !::PeekMessage(&msg, NULL, NULL, NULL, PM_NOREMOVE);
 	}
-	else if (emulating && active && !paused)
+	// Need to be active, not paused and not on a break point
+	else if (emulating && active && !paused && !hasHitBP)
 	{
 ///    for(int i = 0; i < 2; i++)
 		{
@@ -1134,6 +1144,9 @@ BOOL VBA::OnIdle(LONG lCount)
 
 			// save the state for rewinding, if necessary
 			saveRewindStateIfNecessary();
+
+			// open the dissambler window if a break point has been reached
+			openDisassemblerIfOnBreakPoint();
 
 			rewindSaveNeeded = false;
 		}

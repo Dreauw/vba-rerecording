@@ -251,6 +251,7 @@ public:
 	bool initInput();
 	void addRecentFile(const CString &file);
 	void saveRewindStateIfNecessary();
+	void openDisassemblerIfOnBreakPoint();
 	//{{AFX_MSG(VBA)
 	afx_msg void OnAppAbout();
 	// NOTE - the ClassWizard will add and remove member functions here.

@@ -193,6 +193,7 @@
 #define IDS_RESUMEAVIRECORDING          190
 #define IDS_STARTSOUNDRECORDING         191
 #define IDS_STOPSOUNDRECORDING          192
+#define IDR_DISASSEMBLE_MENU            193
 #define IDR_MENU                        401
 #define IDR_ACCELERATOR                 405
 #define IDR_GB_PRINTER                  406
@@ -276,6 +277,7 @@
 #define IDC_NEXT2                       1023
 #define IDC_START                       1024
 #define IDC_SEARCH                      1025
+#define IDC_NEXT3                       1025
 #define IDC_OLD_VALUE                   1026
 #define IDC_SPECIFIC_VALUE              1027
 #define IDC_SIZE_8                      1028
@@ -435,6 +437,7 @@
 #define IDC_AUTOMATIC                   1199
 #define IDC_ARM                         1200
 #define IDC_THUMB                       1201
+#define IDC_BREAKPOINTS                 1202
 #define IDC_AUTO_UPDATE                 1204
 #define IDC_N                           1210
 #define IDC_Z                           1211
@@ -446,6 +449,7 @@
 #define IDC_PORT                        1217
 #define IDC_VSCROLL                     1218
 #define IDC_LOG                         1219
+#define IDC_VSCROLL2                    1219
 #define IDC_CLEAR                       1220
 #define IDC_TILE_NUMBER                 1221
 #define IDC_XY                          1222
@@ -1059,6 +1063,8 @@
 #define ID_MOVIE_TOOL_DELETE_ONE_FRAME  42451
 #define ID_MOVIE_TOOL_INSERT_FRAMES     42452
 #define ID_MOVIE_TOOL_DELETE_FRAMES     42453
+#define ID_TOGGLEBREAKPOINT             42460
+#define ID_TOGGLEBREAKPOINT_CDDDS       42461
 #define IDC_C_WATCH_DOWN                43400
 #define IDC_C_WATCH_DUPLICATE           43401
 #define IDC_C_WATCH_EDIT                43402
@@ -1073,8 +1079,8 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        193
-#define _APS_NEXT_COMMAND_VALUE         42460
+#define _APS_NEXT_RESOURCE_VALUE        194
+#define _APS_NEXT_COMMAND_VALUE         42462
 #define _APS_NEXT_CONTROL_VALUE         1500
 #define _APS_NEXT_SYMED_VALUE           43513
 #endif

@@ -64,6 +64,8 @@ ON_BN_CLICKED(IDC_THUMB, OnThumb)
 ON_WM_VSCROLL()
 //}}AFX_MSG_MAP
 ON_BN_CLICKED(IDC_NEXT2, &Disassemble::OnNextFrame)
+ON_BN_CLICKED(IDC_NEXT3, &Disassemble::OnContinue)
+ON_WM_CONTEXTMENU()
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -144,13 +146,16 @@ BOOL Disassemble::OnInitDialog()
 
 	DIALOG_SIZER_START(sz)
 	DIALOG_SIZER_ENTRY(IDC_DISASSEMBLE, DS_SizeY)
+	DIALOG_SIZER_ENTRY(IDC_BREAKPOINTS, DS_SizeY)
 	DIALOG_SIZER_ENTRY(IDC_REFRESH, DS_MoveY)
 	DIALOG_SIZER_ENTRY(IDC_CLOSE, DS_MoveY)
 	DIALOG_SIZER_ENTRY(IDC_NEXT,  DS_MoveY)
 	DIALOG_SIZER_ENTRY(IDC_NEXT2, DS_MoveY)
+	DIALOG_SIZER_ENTRY(IDC_NEXT3, DS_MoveY)
 	DIALOG_SIZER_ENTRY(IDC_AUTO_UPDATE, DS_MoveY)
 	DIALOG_SIZER_ENTRY(IDC_GOPC, DS_MoveY)
 	DIALOG_SIZER_ENTRY(IDC_VSCROLL, DS_SizeY)
+	DIALOG_SIZER_ENTRY(IDC_VSCROLL2, DS_SizeY)
 	DIALOG_SIZER_END()
 	SetData(sz,
 	        TRUE,
@@ -268,23 +273,34 @@ void Disassemble::refresh()
 	if (!systemIsEmulating() && systemCartridgeType == 0)
 		return;
 
-	char buffer[80];
+	char buffer[82];
 	u32  addr = address;
 	int  i;
 	int  sel = -1;
 	for (i = 0; i < count; i++)
 	{
+		u32 itemAddr = addr;
+		buffer[0] = buffer[1] =  ' ';
+
+		// Show a '*' when there's a break point
+		if (breakPointExist(addr))
+		{
+			buffer[0] = '*';
+		}
+
 		if (addr == armNextPC)
 			sel = i;
 		if (arm)
 		{
-			addr += disArm(addr, buffer, 3);
+			addr += disArm(addr, &buffer[2], 3);
 		}
 		else
 		{
-			addr += disThumb(addr, buffer, 3);
+			addr += disThumb(addr, &buffer[2], 3);
 		}
-		m_list.InsertString(-1, buffer);
+		int pos = m_list.InsertString(-1, buffer);
+		// Associate each item with his address
+		m_list.SetItemData(pos, (DWORD_PTR)itemAddr);
 	}
 
 	if (sel != -1)
@@ -311,6 +327,9 @@ void Disassemble::refresh()
 	int v = reg[16].I & 0x1f;
 	sprintf(buffer, "%02x", v);
 	GetDlgItem(IDC_MODE)->SetWindowText(buffer);
+
+	// Disable/Enable the continue button
+	updateContinueButton();
 }
 
 void Disassemble::update()
@@ -366,6 +385,75 @@ BOOL Disassemble::PreTranslateMessage(MSG* pMsg)
 		{ 
 			OnNextFrame();
 		}
+		else if (pMsg->wParam == VK_F8)
+		{
+			OnContinue();
+		}
 	}
 	return __super::PreTranslateMessage(pMsg);
+}
+
+void Disassemble::updateContinueButton()
+{
+	BOOL enable = (theApp.paused || !theApp.active) ? TRUE : FALSE;
+
+	CWnd *continueButton = GetDlgItem(IDC_NEXT3);
+
+	if (continueButton) {
+		continueButton->EnableWindow(enable);
+	}
+}
+
+
+void Disassemble::OnContinue()
+{
+	if (hasHitBP)
+	{
+		// If we're curently on a break point, we need to step over the instruction
+		CPUExecuteOpcodes(1, 1);
+	}
+	hasHitBP = false;
+	theApp.active = true;
+	theApp.paused = false;
+	updateContinueButton();
+}
+
+
+void Disassemble::OnContextMenu(CWnd* pWnd, CPoint point)
+{
+
+	if (&m_list == pWnd)
+	{
+		CMenu menu;
+		CMenu* subMenu;
+
+		menu.LoadMenu(IDR_DISASSEMBLE_MENU);
+		subMenu = menu.GetSubMenu(0);
+
+		int retVal = subMenu->TrackPopupMenu(TPM_LEFTALIGN | TPM_TOPALIGN | TPM_NONOTIFY | TPM_RETURNCMD, point.x, point.y, this);
+
+		// Toggle Break Point
+		if (retVal == ID_TOGGLEBREAKPOINT)
+		{
+			int idx = m_list.GetCurSel();
+			if (idx != LB_ERR)
+			{
+				u32 addr = m_list.GetItemData(idx);
+				if (addr != 0)
+				{
+					// If there's a breakpoint, we remove it
+					if (!removeBreakPoint(addr))
+					{
+						// If removing the breakpoint failed, then that's probably because
+						// there's no breakpoint at this address, so we add one
+						addBreakPoint(addr);
+					}
+
+					// Refresh (to update the breakpoint symbol)
+					refresh();
+				}
+			}
+			
+		}
+	}
 }

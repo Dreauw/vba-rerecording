@@ -56,7 +56,6 @@ protected:
 	afx_msg void OnArm();
 	afx_msg void OnClose();
 	afx_msg void OnGo();
-	afx_msg void OnGopc();
 	afx_msg void OnNext();
 	afx_msg void OnRefresh();
 	afx_msg void OnThumb();
@@ -65,10 +64,16 @@ protected:
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 public:
+	afx_msg void OnGopc();
 	afx_msg void OnNextFrame();
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
 private:
 	void refreshPosition();
+	void updateContinueButton();
+
+public:
+	afx_msg void OnContinue();
+	afx_msg void OnContextMenu(CWnd* /*pWnd*/, CPoint /*point*/);
 };
 
 //{{AFX_INSERT_LOCATION}}

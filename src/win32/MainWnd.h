@@ -24,6 +24,7 @@ private:
 
 	// Implementation
 private:
+	void *disassembleDlg;
 
 	// Operations
 public:
@@ -33,6 +34,7 @@ public:
 	bool winFileOpenSelect(int cartridgeType);
 	void winMouseOn();
 	void winConfirmMode();
+	void openToolsDisassemble(bool goPC = false);
 
 	// Overrides
 	// ClassWizard generated virtual function overrides

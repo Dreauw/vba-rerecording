@@ -43,11 +43,26 @@ extern void toolsLogging();
 
 void MainWnd::OnToolsDisassemble()
 {
+	openToolsDisassemble();
+}
+
+void MainWnd::openToolsDisassemble(bool goPC)
+{
 	if (systemCartridgeType == 0)
 	{
-		Disassemble *dlg = new Disassemble();
-		dlg->Create(IDD_DISASSEMBLE, this);
-		dlg->ShowWindow(SW_SHOW);
+		// Only one instance of Disassemble
+		if (disassembleDlg == NULL || !IsWindow(((Disassemble*)disassembleDlg)->m_hWnd))
+		{
+			disassembleDlg = new Disassemble();
+			((Disassemble*)disassembleDlg)->Create(IDD_DISASSEMBLE, this);
+		}
+
+		if (goPC)
+		{
+			((Disassemble*)disassembleDlg)->OnGopc();
+		}
+
+		((Disassemble*)disassembleDlg)->ShowWindow(SW_SHOW);
 	}
 	else
 	{

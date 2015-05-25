@@ -650,7 +650,7 @@ BEGIN
     GROUPBOX        "Sprite",IDC_STATIC,8,67,154,30
 END
 
-IDD_DISASSEMBLE DIALOGEX 0, 0, 402, 225
+IDD_DISASSEMBLE DIALOGEX 0, 0, 583, 225
 STYLE DS_SETFONT | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
 CAPTION "Disassemble"
 FONT 8, "MS Sans Serif", 0, 0, 0x0
@@ -660,11 +660,11 @@ BEGIN
     CONTROL         "THUMB",IDC_THUMB,"Button",BS_AUTORADIOBUTTON,103,9,42,10
     EDITTEXT        IDC_ADDRESS,158,7,65,14,ES_UPPERCASE | ES_AUTOHSCROLL | WS_GROUP
     DEFPUSHBUTTON   "Go",IDC_GO,232,7,50,14
-    LISTBOX         IDC_DISASSEMBLE,7,25,276,161,LBS_SORT | LBS_NOINTEGRALHEIGHT | WS_TABSTOP
+    LISTBOX         IDC_DISASSEMBLE,7,25,276,162,LBS_SORT | LBS_NOINTEGRALHEIGHT | WS_TABSTOP
     CONTROL         "Automatic update",IDC_AUTO_UPDATE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,191,71,10
     PUSHBUTTON      "Refresh",IDC_REFRESH,64,204,50,14
     PUSHBUTTON      "(F6) Next Instruction",IDC_NEXT,145,204,69,14
-    PUSHBUTTON      "Close",IDC_CLOSE,339,204,50,14
+    PUSHBUTTON      "Close",IDC_CLOSE,527,204,50,14
     LTEXT           "R0:",IDC_STATIC,309,7,18,8
     LTEXT           "R1:",IDC_STATIC,309,15,18,8
     LTEXT           "R2:",IDC_STATIC,309,23,18,8
@@ -673,22 +673,22 @@ BEGIN
     LTEXT           "R5:",IDC_STATIC,309,47,18,8
     LTEXT           "R6:",IDC_STATIC,309,55,18,8
     LTEXT           "R7:",IDC_STATIC,309,63,18,8
-    LTEXT           "",IDC_R0,344,7,52,8
-    LTEXT           "",IDC_R1,344,15,52,8
-    LTEXT           "",IDC_R2,344,23,52,8
-    LTEXT           "",IDC_R3,344,31,52,8
-    LTEXT           "",IDC_R4,344,39,52,8
-    LTEXT           "",IDC_R5,344,47,52,8
-    LTEXT           "",IDC_R6,344,55,52,8
-    LTEXT           "",IDC_R7,344,63,52,8
-    LTEXT           "",IDC_R8,344,71,52,8
-    LTEXT           "",IDC_R9,344,79,52,8
-    LTEXT           "",IDC_R10,344,87,52,8
-    LTEXT           "",IDC_R11,344,95,52,8
-    LTEXT           "",IDC_R12,344,103,52,8
-    LTEXT           "",IDC_R13,344,111,52,8
-    LTEXT           "",IDC_R14,344,119,52,8
-    LTEXT           "",IDC_R15,344,127,52,8
+    LTEXT           "",IDC_R0,332,7,52,8
+    LTEXT           "",IDC_R1,332,15,52,8
+    LTEXT           "",IDC_R2,332,23,52,8
+    LTEXT           "",IDC_R3,332,31,52,8
+    LTEXT           "",IDC_R4,332,39,52,8
+    LTEXT           "",IDC_R5,332,47,52,8
+    LTEXT           "",IDC_R6,332,55,52,8
+    LTEXT           "",IDC_R7,332,63,52,8
+    LTEXT           "",IDC_R8,332,71,52,8
+    LTEXT           "",IDC_R9,332,79,52,8
+    LTEXT           "",IDC_R10,332,87,52,8
+    LTEXT           "",IDC_R11,332,95,52,8
+    LTEXT           "",IDC_R12,332,103,52,8
+    LTEXT           "",IDC_R13,332,111,52,8
+    LTEXT           "",IDC_R14,332,119,52,8
+    LTEXT           "",IDC_R15,332,127,52,8
     LTEXT           "R8:",IDC_STATIC,309,71,18,8
     LTEXT           "R9:",IDC_STATIC,309,79,18,8
     LTEXT           "R10:",IDC_STATIC,309,87,18,8
@@ -697,7 +697,7 @@ BEGIN
     LTEXT           "R13:",IDC_STATIC,309,111,18,8
     LTEXT           "R14:",IDC_STATIC,309,119,18,8
     LTEXT           "R15:",IDC_STATIC,309,127,18,8
-    LTEXT           "",IDC_R16,344,135,52,8
+    LTEXT           "",IDC_R16,332,135,52,8
     LTEXT           "R16:",IDC_STATIC,309,135,20,8
     CONTROL         "N",IDC_N,"Button",BS_AUTOCHECKBOX | WS_DISABLED | WS_TABSTOP,309,146,21,10
     CONTROL         "Z",IDC_Z,"Button",BS_AUTOCHECKBOX | WS_DISABLED | WS_TABSTOP,309,156,21,10
@@ -707,10 +707,14 @@ BEGIN
     CONTROL         "I",IDC_I,"Button",BS_AUTOCHECKBOX | WS_DISABLED | WS_TABSTOP,342,146,18,10
     CONTROL         "T",IDC_T,"Button",BS_AUTOCHECKBOX | WS_DISABLED | WS_TABSTOP,342,166,21,10
     LTEXT           "Mode:",IDC_STATIC,341,176,21,8
-    LTEXT           "",IDC_MODE,376,176,20,8
+    LTEXT           "",IDC_MODE,364,176,20,8
     SCROLLBAR       IDC_VSCROLL,283,25,10,161,SBS_VERT
     PUSHBUTTON      "Goto R15",IDC_GOPC,7,204,50,14
     PUSHBUTTON      "(F7) Next Frame",IDC_NEXT2,219,204,64,14
+    LISTBOX         IDC_BREAKPOINTS,393,18,174,160,LBS_SORT | LBS_NOINTEGRALHEIGHT | WS_TABSTOP
+    LTEXT           "Break Points",IDC_STATIC,394,7,43,8
+    SCROLLBAR       IDC_VSCROLL2,567,18,10,160,SBS_VERT
+    PUSHBUTTON      "(F8) Continue",IDC_NEXT3,288,204,64,14
 END
 
 IDD_GDB_PORT DIALOG 0, 0, 186, 51
@@ -1465,7 +1469,7 @@ BEGIN
     IDD_DISASSEMBLE, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 396
+        RIGHTMARGIN, 577
         TOPMARGIN, 7
         BOTTOMMARGIN, 218
     END
@@ -2613,6 +2617,30 @@ BEGIN
 END
 
 #endif    // Anglais (États-Unis) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
+// Français (France) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_FRA)
+LANGUAGE LANG_FRENCH, SUBLANG_FRENCH
+#pragma code_page(1252)
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+IDR_DISASSEMBLE_MENU MENU
+BEGIN
+    POPUP ""
+    BEGIN
+        MENUITEM "Toggle Breakpoint\tF5",       ID_TOGGLEBREAKPOINT
+    END
+END
+
+#endif    // Français (France) resources
 /////////////////////////////////////////////////////////////////////////////
 
 
