@@ -413,9 +413,25 @@ void Disassemble::OnNextFrame()
 	refreshPosition();
 }
 
+void Disassemble::setClipboardText(char* text)
+{
+	OpenClipboard();
+	EmptyClipboard();
+	HGLOBAL hg = GlobalAlloc(GMEM_MOVEABLE, strlen(text) + 1);
+	if (!hg){
+		CloseClipboard();
+		return;
+	}
+	memcpy(GlobalLock(hg), text, strlen(text) + 1);
+	GlobalUnlock(hg);
+	SetClipboardData(CF_TEXT, hg);
+	CloseClipboard();
+	GlobalFree(hg);
+}
 
 BOOL Disassemble::PreTranslateMessage(MSG* pMsg)
 {
+	// TODO : Use of accelerators
 	if (pMsg->message == WM_KEYDOWN)
 	{
 		if (pMsg->wParam == VK_F5)
@@ -433,6 +449,13 @@ BOOL Disassemble::PreTranslateMessage(MSG* pMsg)
 		else if (pMsg->wParam == VK_F8)
 		{
 			OnContinue();
+		}
+		else if (pMsg->wParam == 'C')
+		{
+			if (HIWORD(GetKeyState(VK_CONTROL)))
+			{
+				copySelectedLine();
+			}
 		}
 	}
 	return __super::PreTranslateMessage(pMsg);
@@ -490,6 +513,34 @@ void Disassemble::toggleBpAtSelection()
 	}
 }
 
+void Disassemble::copySelectedAddress()
+{
+	int idx = m_list.GetCurSel();
+	if (idx != LB_ERR)
+	{
+		u32 addr = m_list.GetItemData(idx);
+		if (addr >= 0)
+		{
+			char buffer[82];
+			disThumb(addr, buffer, DIS_VIEW_ADDRESS);
+			setClipboardText(buffer);
+		}
+	}
+}
+
+void Disassemble::copySelectedLine()
+{
+	int idx = m_list.GetCurSel();
+	if (idx != LB_ERR)
+	{
+		CString str;
+		int n = m_list.GetTextLen(idx);
+		m_list.GetText(idx, str.GetBuffer(n));
+		str.ReleaseBuffer();
+		setClipboardText(&(str.GetBuffer(0))[2]);
+	}
+}
+
 
 void Disassemble::OnContextMenu(CWnd* pWnd, CPoint point)
 {
@@ -508,6 +559,14 @@ void Disassemble::OnContextMenu(CWnd* pWnd, CPoint point)
 		if (retVal == ID_TOGGLEBREAKPOINT)
 		{
 			toggleBpAtSelection();
+		}
+		else if (retVal == ID_COPYADDRESS)
+		{
+			copySelectedAddress();
+		}
+		else if (retVal == ID_COPYLINE) 
+		{
+			copySelectedLine();
 		}
 	}
 }

@@ -1065,6 +1065,10 @@
 #define ID_MOVIE_TOOL_DELETE_FRAMES     42453
 #define ID_TOGGLEBREAKPOINT             42460
 #define ID_TOGGLEBREAKPOINT_CDDDS       42461
+#define ID__COPYADDRESS                 42462
+#define ID__COPYLINE                    42463
+#define ID_COPYLINE                     42464
+#define ID_COPYADDRESS                  42465
 #define IDC_C_WATCH_DOWN                43400
 #define IDC_C_WATCH_DUPLICATE           43401
 #define IDC_C_WATCH_EDIT                43402
@@ -1080,7 +1084,7 @@
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        194
-#define _APS_NEXT_COMMAND_VALUE         42462
+#define _APS_NEXT_COMMAND_VALUE         42466
 #define _APS_NEXT_CONTROL_VALUE         1500
 #define _APS_NEXT_SYMED_VALUE           43513
 #endif

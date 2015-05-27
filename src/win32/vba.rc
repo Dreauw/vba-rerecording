@@ -2637,6 +2637,9 @@ BEGIN
     POPUP ""
     BEGIN
         MENUITEM "Toggle Breakpoint\tF5",       ID_TOGGLEBREAKPOINT
+        MENUITEM SEPARATOR
+        MENUITEM "Copy address",                ID_COPYADDRESS
+        MENUITEM "Copy line\tCTRL+C",           ID_COPYLINE
     END
 END
 

@@ -76,6 +76,9 @@ private:
 	void initScrollInfo(int res, int nMin, int nMax, int nPos);
 	bool isArm();
 	void toggleBpAtSelection();
+	void setClipboardText(char*);
+	void copySelectedAddress();
+	void copySelectedLine();
 
 public:
 	afx_msg void OnContinue();
