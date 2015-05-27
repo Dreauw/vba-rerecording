@@ -27,10 +27,11 @@ Disassemble::Disassemble(CWnd*pParent /*=NULL*/)
 	m_v  = FALSE;
 	m_z  = FALSE;
 	//}}AFX_DATA_INIT
-	autoUpdate = false;
-	address    = 0;
-	count      = 1;
-	mode       = 0;
+	autoUpdate      = false;
+	address         = 0;
+	count           = 1;
+	mode            = 0;
+	breakPointIndex = 0;
 }
 
 void Disassemble::DoDataExchange(CDataExchange*pDX)
@@ -39,6 +40,7 @@ void Disassemble::DoDataExchange(CDataExchange*pDX)
 	//{{AFX_DATA_MAP(Disassemble)
 	DDX_Control(pDX, IDC_ADDRESS, m_address);
 	DDX_Control(pDX, IDC_DISASSEMBLE, m_list);
+	DDX_Control(pDX, IDC_BREAKPOINTS, m_bp_list);
 	DDX_Check(pDX, IDC_C, m_c);
 	DDX_Check(pDX, IDC_F, m_f);
 	DDX_Check(pDX, IDC_I, m_i);
@@ -66,6 +68,7 @@ ON_WM_VSCROLL()
 ON_BN_CLICKED(IDC_NEXT2, &Disassemble::OnNextFrame)
 ON_BN_CLICKED(IDC_NEXT3, &Disassemble::OnContinue)
 ON_WM_CONTEXTMENU()
+ON_LBN_SELCHANGE(IDC_BREAKPOINTS, &Disassemble::OnLbnSelchangeBreakpoints)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -88,12 +91,14 @@ void Disassemble::OnAutomatic()
 {
 	mode = 0;
 	refresh();
+	refreshBreakpoints();
 }
 
 void Disassemble::OnArm()
 {
 	mode = 1;
 	refresh();
+	refreshBreakpoints();
 }
 
 void Disassemble::OnClose()
@@ -138,6 +143,20 @@ void Disassemble::OnThumb()
 {
 	mode = 2;
 	refresh();
+	refreshBreakpoints();
+}
+
+void Disassemble::initScrollInfo(int res, int nMin, int nMax, int nPos)
+{
+	SCROLLINFO si;
+	ZeroMemory(&si, sizeof(si));
+	si.cbSize = sizeof(si);
+	si.fMask = SIF_ALL | SIF_DISABLENOSCROLL;
+	si.nMin = nMin;
+	si.nMax = nMax;
+	si.nPos = nPos;
+	si.nPage = 10;
+	GetDlgItem(res)->SetScrollInfo(SB_CTL, &si, TRUE);
 }
 
 BOOL Disassemble::OnInitDialog()
@@ -163,18 +182,12 @@ BOOL Disassemble::OnInitDialog()
 	        "Software\\Emulators\\VisualBoyAdvance\\Viewer\\DisassembleView",
 	        NULL);
 
-	SCROLLINFO si;
-	ZeroMemory(&si, sizeof(si));
-	si.cbSize = sizeof(si);
-	si.fMask  = SIF_PAGE | SIF_RANGE | SIF_POS;
-	si.nMin   = 0;
-	si.nMax   = 100;
-	si.nPos   = 50;
-	si.nPage  = 0;
-	GetDlgItem(IDC_VSCROLL)->SetScrollInfo(SB_CTL, &si, TRUE);
+	initScrollInfo(IDC_VSCROLL, 0, 100, 50);
 
 	CFont *font = CFont::FromHandle((HFONT)GetStockObject(SYSTEM_FIXED_FONT));
 	m_list.SetFont(font, FALSE);
+	m_bp_list.SetFont(font, FALSE);
+
 	for (int i = 0; i < 17; i++)
 		GetDlgItem(IDC_R0+i)->SetFont(font, FALSE);
 
@@ -182,74 +195,102 @@ BOOL Disassemble::OnInitDialog()
 
 	m_address.LimitText(8);
 	refresh();
+	refreshBreakpoints();
 
 	return TRUE; // return TRUE unless you set the focus to a control
 	             // EXCEPTION: OCX Property Pages should return FALSE
 }
 
+bool Disassemble::isArm()
+{
+	return (mode == 1 || (mode == 0 && armState));
+}
+
 void Disassemble::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar*pScrollBar)
 {
-	switch (nSBCode)
+	u32 inc = isArm() ? 4 : 2;
+
+	// ScrollBar of the breakpoints list
+	if (pScrollBar == GetDlgItem(IDC_VSCROLL2))
 	{
-	case SB_LINEDOWN:
-		if (mode == 0)
+		if ((nSBCode == SB_THUMBPOSITION || nSBCode == SB_THUMBTRACK))
 		{
-			if (armState)
-				address += 4;
-			else
-				address += 2;
+			breakPointIndex = nPos;
 		}
-		else if (mode == 1)
-			address += 4;
-		else
-			address += 2;
-		break;
-	case SB_LINEUP:
-		if (mode == 0)
+		else if (nSBCode == SB_LINEDOWN && breakPointIndex < nbBreakPoints)
 		{
-			if (armState)
-				address -= 4;
-			else
-				address -= 2;
+			++breakPointIndex;
 		}
-		else if (mode == 1)
-			address -= 4;
-		else
-			address -= 2;
-		break;
-	case SB_PAGEDOWN:
-		if (mode == 0)
+		else if (nSBCode == SB_LINEUP && breakPointIndex > 0)
 		{
-			if (armState)
-				address += count*4;
-			else
-				address += count*2;
+			--breakPointIndex;
 		}
-		else if (mode == 1)
-			address += count*4;
-		else
-			address += count*2;
-		break;
-	case SB_PAGEUP:
-		if (mode == 0)
-		{
-			if (armState)
-				address -= count*4;
-			else
-				address -= count*2;
-		}
-		else if (mode == 1)
-			address -= count*4;
-		else
-			address -= count*2;
-		break;
+
+		refreshBreakpoints();
+		initScrollInfo(IDC_VSCROLL2, 0, nbBreakPoints, breakPointIndex);
 	}
-	refresh();
+	else 
+	{
+		// Scrollbar of the disassembler
+		switch (nSBCode)
+		{
+		case SB_LINEDOWN:
+			address += inc;
+			break;
+		case SB_LINEUP:
+			address -= inc;
+			break;
+		case SB_PAGEDOWN:
+			address += count * inc;
+			break;
+		case SB_PAGEUP:
+			address -= count * inc;
+			break;
+		}
+		refresh();
+	}
+
 
 	CDialog::OnVScroll(nSBCode, nPos, pScrollBar);
 }
 
-void Disassemble::refresh()
+void Disassemble::refreshBreakpoints()
+{
+	if (rom == NULL)
+		return;
+
+	int  h = m_bp_list.GetItemHeight(0);
+	RECT r;
+	m_bp_list.GetClientRect(&r);
+	count = min((r.bottom - r.top + 1) / h, (int) (nbBreakPoints - breakPointIndex));
+
+	m_bp_list.ResetContent();
+	if (!systemIsEmulating() && systemCartridgeType == 0)
+		return;
+
+	char buffer[82];
+	u32  addr = address;
+	for (int i = 0; i < count; i++)
+	{
+		u32 itemAddr = breakPoints[i + breakPointIndex];
+
+		if (isArm())
+		{
+			disArm(itemAddr, buffer, 3);
+		}
+		else
+		{
+			disThumb(itemAddr, buffer, 3);
+		}
+		int pos = m_bp_list.InsertString(-1, buffer);
+		// Associate each item with his address
+		m_bp_list.SetItemData(pos, (DWORD_PTR)itemAddr);
+	}
+
+	initScrollInfo(IDC_VSCROLL2, 0, nbBreakPoints, breakPointIndex);
+}
+
+void Disassemble::refresh(bool refreshSel)
 {
 	if (rom == NULL)
 		return;
@@ -288,7 +329,7 @@ void Disassemble::refresh()
 			buffer[0] = '*';
 		}
 
-		if (addr == armNextPC)
+		if (refreshSel && addr == armNextPC)
 			sel = i;
 		if (arm)
 		{
@@ -303,7 +344,7 @@ void Disassemble::refresh()
 		m_list.SetItemData(pos, (DWORD_PTR)itemAddr);
 	}
 
-	if (sel != -1)
+	if (refreshSel && sel != -1)
 		m_list.SetCurSel(sel);
 
 	CPUUpdateCPSR();
@@ -377,7 +418,11 @@ BOOL Disassemble::PreTranslateMessage(MSG* pMsg)
 {
 	if (pMsg->message == WM_KEYDOWN)
 	{
-		if (pMsg->wParam == VK_F6)
+		if (pMsg->wParam == VK_F5)
+		{
+			toggleBpAtSelection();
+		}
+		else if (pMsg->wParam == VK_F6)
 		{
 			OnNext();
 		}
@@ -418,6 +463,33 @@ void Disassemble::OnContinue()
 	updateContinueButton();
 }
 
+void Disassemble::toggleBpAtSelection()
+{
+	int idx = m_list.GetCurSel();
+	if (idx != LB_ERR)
+	{
+		u32 addr = m_list.GetItemData(idx);
+		if (addr >= 0)
+		{
+			// If there's already a breakpoint a this address, we remove it
+			if (!removeBreakPoint(addr))
+			{
+				// If removing the breakpoint failed, then that's probably because
+				// there's no breakpoint, so we can add one
+				addBreakPoint(addr);
+			}
+
+			// Refresh (to update the breakpoint symbol)
+			refresh(false);
+			// Refresh the breakpoint list
+			refreshBreakpoints();
+
+			// To keep the selection
+			m_list.SetCurSel(idx);
+		}
+	}
+}
+
 
 void Disassemble::OnContextMenu(CWnd* pWnd, CPoint point)
 {
@@ -435,25 +507,24 @@ void Disassemble::OnContextMenu(CWnd* pWnd, CPoint point)
 		// Toggle Break Point
 		if (retVal == ID_TOGGLEBREAKPOINT)
 		{
-			int idx = m_list.GetCurSel();
-			if (idx != LB_ERR)
-			{
-				u32 addr = m_list.GetItemData(idx);
-				if (addr != 0)
-				{
-					// If there's a breakpoint, we remove it
-					if (!removeBreakPoint(addr))
-					{
-						// If removing the breakpoint failed, then that's probably because
-						// there's no breakpoint at this address, so we add one
-						addBreakPoint(addr);
-					}
+			toggleBpAtSelection();
+		}
+	}
+}
 
-					// Refresh (to update the breakpoint symbol)
-					refresh();
-				}
-			}
-			
+
+void Disassemble::OnLbnSelchangeBreakpoints()
+{
+	// When a breakpoint is selected
+	int idx = m_bp_list.GetCurSel();
+	if (idx != LB_ERR)
+	{
+		u32 addr = m_bp_list.GetItemData(idx);
+		if (addr >= 0)
+		{
+			// We go to the selected bp
+			address = addr;
+			refresh();
 		}
 	}
 }

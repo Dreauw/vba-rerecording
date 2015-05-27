@@ -18,7 +18,7 @@ class Disassemble : public ResizeDlg, IUpdateListener
 	// Construction
 public:
 	virtual void update();
-	void refresh();
+	void refresh(bool refreshSel = true);
 	Disassemble(CWnd*pParent = NULL);  // standard constructor
 
 	// Dialog Data
@@ -26,6 +26,7 @@ public:
 	enum { IDD = IDD_DISASSEMBLE };
 	CEdit    m_address;
 	CListBox m_list;
+	CListBox m_bp_list;
 	BOOL     m_c;
 	BOOL     m_f;
 	BOOL     m_i;
@@ -38,6 +39,7 @@ public:
 	int  count;
 	u32  address;
 	int  mode;
+	int  breakPointIndex;
 
 	// Overrides
 	// ClassWizard generated virtual function overrides
@@ -69,11 +71,16 @@ public:
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
 private:
 	void refreshPosition();
+	void refreshBreakpoints();
 	void updateContinueButton();
+	void initScrollInfo(int res, int nMin, int nMax, int nPos);
+	bool isArm();
+	void toggleBpAtSelection();
 
 public:
 	afx_msg void OnContinue();
 	afx_msg void OnContextMenu(CWnd* /*pWnd*/, CPoint /*point*/);
+	afx_msg void OnLbnSelchangeBreakpoints();
 };
 
 //{{AFX_INSERT_LOCATION}}

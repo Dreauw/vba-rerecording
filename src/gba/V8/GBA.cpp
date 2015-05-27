@@ -3832,7 +3832,7 @@ bool removeBreakPoint(u32 addr)
 		if (breakPoints[bpIdx] == addr)
 		{
 			// Shift all the breakpoints after the one we want to remove to the left (to avoid gaps in the array)
-			for (u32 i = bpIdx; i < nbBreakPoints - 1; ++i)
+			for (int i = bpIdx; i < nbBreakPoints - 1; ++i)
 			{
 				breakPoints[i] = breakPoints[i + 1];
 			}
