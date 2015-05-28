@@ -72,6 +72,7 @@ ON_BN_CLICKED(IDC_NEXT3, &Disassemble::OnContinue)
 ON_WM_CONTEXTMENU()
 ON_LBN_SELCHANGE(IDC_BREAKPOINTS, &Disassemble::OnLbnSelchangeBreakpoints)
 ON_LBN_SELCHANGE(IDC_JUMPTRACE, &Disassemble::OnLbnSelchangeJumptrace)
+ON_BN_CLICKED(IDC_COPY_JUMPTRACE, &Disassemble::OnBnClickedCopyJumptrace)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -183,6 +184,7 @@ BOOL Disassemble::OnInitDialog()
 	DIALOG_SIZER_ENTRY(IDC_VSCROLL2, DS_SizeY)
 	DIALOG_SIZER_ENTRY(IDC_VSCROLL2, DS_MoveX)
 	DIALOG_SIZER_ENTRY(IDC_VSCROLL3, DS_MoveX)
+	DIALOG_SIZER_ENTRY(IDC_COPY_JUMPTRACE, DS_MoveX)
 	DIALOG_SIZER_END()
 	SetData(sz,
 	        TRUE,
@@ -659,4 +661,22 @@ void Disassemble::OnLbnSelchangeJumptrace()
 			refresh();
 		}
 	}
+}
+
+
+void Disassemble::OnBnClickedCopyJumptrace()
+{
+	// Copy all the jumptrace into the clipboard
+	int size = m_jumptrace_list.GetCount();
+	char line[82];
+	CString result;
+	for (int i = 0; i < size; ++i)
+	{
+		m_jumptrace_list.GetText(i, line);
+		result.Append(line);
+		result.AppendChar('\r');
+		result.AppendChar('\n');
+	}
+	result.ReleaseBuffer();
+	setClipboardText(result.GetBuffer(0));
 }

@@ -88,6 +88,7 @@ public:
 	afx_msg void OnContextMenu(CWnd* /*pWnd*/, CPoint /*point*/);
 	afx_msg void OnLbnSelchangeBreakpoints();
 	afx_msg void OnLbnSelchangeJumptrace();
+	afx_msg void OnBnClickedCopyJumptrace();
 };
 
 //{{AFX_INSERT_LOCATION}}

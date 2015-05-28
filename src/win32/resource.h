@@ -370,6 +370,8 @@
 #define IDC_REFRESH2                    1127
 #define IDC_CLOSE                       1128
 #define IDC_COLOR                       1129
+#define IDC_CLOSE2                      1129
+#define IDC_COPY_JUMPTRACE              1129
 #define IDC_SAVE_BG                     1130
 #define IDC_SAVE_OBJ                    1131
 #define IDC_MAP_VIEW_ZOOM               1132
@@ -439,7 +441,6 @@
 #define IDC_THUMB                       1201
 #define IDC_BREAKPOINTS                 1202
 #define IDC_AUTO_UPDATE                 1204
-#define IDC_BREAKPOINTS2                1206
 #define IDC_JUMPTRACE                   1206
 #define IDC_N                           1210
 #define IDC_Z                           1211
