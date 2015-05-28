@@ -27,6 +27,7 @@ public:
 	CEdit    m_address;
 	CListBox m_list;
 	CListBox m_bp_list;
+	CListBox m_jumptrace_list;
 	BOOL     m_c;
 	BOOL     m_f;
 	BOOL     m_i;
@@ -40,6 +41,7 @@ public:
 	u32  address;
 	int  mode;
 	int  breakPointIndex;
+	int jumpTraceIndex;
 
 	// Overrides
 	// ClassWizard generated virtual function overrides
@@ -72,6 +74,7 @@ public:
 private:
 	void refreshPosition();
 	void refreshBreakpoints();
+	void refreshJumpTrace();
 	void updateContinueButton();
 	void initScrollInfo(int res, int nMin, int nMax, int nPos);
 	bool isArm();
@@ -84,6 +87,7 @@ public:
 	afx_msg void OnContinue();
 	afx_msg void OnContextMenu(CWnd* /*pWnd*/, CPoint /*point*/);
 	afx_msg void OnLbnSelchangeBreakpoints();
+	afx_msg void OnLbnSelchangeJumptrace();
 };
 
 //{{AFX_INSERT_LOCATION}}

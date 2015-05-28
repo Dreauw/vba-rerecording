@@ -439,6 +439,8 @@
 #define IDC_THUMB                       1201
 #define IDC_BREAKPOINTS                 1202
 #define IDC_AUTO_UPDATE                 1204
+#define IDC_BREAKPOINTS2                1206
+#define IDC_JUMPTRACE                   1206
 #define IDC_N                           1210
 #define IDC_Z                           1211
 #define IDC_C                           1212
@@ -454,6 +456,7 @@
 #define IDC_TILE_NUMBER                 1221
 #define IDC_XY                          1222
 #define IDC_VERBOSE_SWI                 1223
+#define IDC_VSCROLL3                    1223
 #define IDC_VERBOSE_UNALIGNED_ACCESS    1224
 #define IDC_VERBOSE_ILLEGAL_WRITE       1225
 #define IDC_VERBOSE_ILLEGAL_READ        1226

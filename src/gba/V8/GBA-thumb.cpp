@@ -2322,8 +2322,12 @@ int thumbExecute()
 {
 	do
 	{
-		CPUMasterCodeCheck();
+		if (!updateAddressHook())
+		{
+			return 0;
+		}
 
+		CPUMasterCodeCheck();
 		//if ((armNextPC & 0x0803FFFF) == 0x08020000)
 		//    busPrefetchCount=0x100;
 

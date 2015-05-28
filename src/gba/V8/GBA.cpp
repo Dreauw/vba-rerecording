@@ -90,6 +90,10 @@ u32 nbBreakPoints = 0;
 u32 breakPoints[MAX_BREAKPOINTS];
 bool hasHitBP = false;
 
+u32 jumpTrace[MAX_JUMPTRACE];
+u32 previousAddr = 0;
+int jumpTraceIdx = 0;
+
 int32 lcdTicks = (useBios && !skipBios) ? 1008 : 208;
 u8	  timerOnOffDelay	= 0;
 u16	  timer0Value		= 0;
@@ -3856,6 +3860,38 @@ bool addBreakPoint(u32 addr)
 	breakPoints[nbBreakPoints++] = addr;
 }
 
+bool updateAddressHook()
+{
+	// JumpTrace
+	int diff = previousAddr - armNextPC;
+	if (diff > 4 || diff < -4)
+	{
+		// If the difference between the previous addr and the new addr is greater than 4,
+		// then that's probably because of a jump/call, so we can fill the jumptrace
+		jumpTrace[jumpTraceIdx] = previousAddr;
+		jumpTraceIdx = (jumpTraceIdx + 1) % MAX_JUMPTRACE;
+	}
+	previousAddr = armNextPC;
+
+	// Break Points
+	// If there's a bp on the adress we're about to execute
+	if (breakPointExist(armNextPC)) {
+		if (hasHitBP)
+		{
+			// Break point already found, we can continue
+			hasHitBP = false;
+		}
+		else
+		{
+			// Inform that we're on a break point and cancel the execution
+			hasHitBP = true;
+			return false;
+		}
+	}
+
+	return true;
+}
+
 void CPUExecuteOpcodes(int nbOpcodes, int _ticks)
 {
 	CPUBeforeEmulation();
@@ -3940,22 +3976,6 @@ void CPUExecuteOpcodes(int nbOpcodes, int _ticks)
 			}
 		}
 #endif /* FINAL_VERSION */
-
-		// Break Points
-		// If there's a bp on the adress we're about to execute
-		if (breakPointExist(armNextPC)) {
-			if (hasHitBP)
-			{
-				// Break point already found, we can continue
-				hasHitBP = false;
-			}
-			else
-			{
-				// Inform that we're on a break point and cancel the execution
-				hasHitBP = true;
-				return;
-			}
-		}
 
 		if (!holdState && !SWITicks)
 		{

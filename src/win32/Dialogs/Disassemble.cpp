@@ -32,6 +32,7 @@ Disassemble::Disassemble(CWnd*pParent /*=NULL*/)
 	count           = 1;
 	mode            = 0;
 	breakPointIndex = 0;
+	jumpTraceIndex  = 0;
 }
 
 void Disassemble::DoDataExchange(CDataExchange*pDX)
@@ -41,6 +42,7 @@ void Disassemble::DoDataExchange(CDataExchange*pDX)
 	DDX_Control(pDX, IDC_ADDRESS, m_address);
 	DDX_Control(pDX, IDC_DISASSEMBLE, m_list);
 	DDX_Control(pDX, IDC_BREAKPOINTS, m_bp_list);
+	DDX_Control(pDX, IDC_JUMPTRACE, m_jumptrace_list);
 	DDX_Check(pDX, IDC_C, m_c);
 	DDX_Check(pDX, IDC_F, m_f);
 	DDX_Check(pDX, IDC_I, m_i);
@@ -69,6 +71,7 @@ ON_BN_CLICKED(IDC_NEXT2, &Disassemble::OnNextFrame)
 ON_BN_CLICKED(IDC_NEXT3, &Disassemble::OnContinue)
 ON_WM_CONTEXTMENU()
 ON_LBN_SELCHANGE(IDC_BREAKPOINTS, &Disassemble::OnLbnSelchangeBreakpoints)
+ON_LBN_SELCHANGE(IDC_JUMPTRACE, &Disassemble::OnLbnSelchangeJumptrace)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -166,8 +169,11 @@ BOOL Disassemble::OnInitDialog()
 	DIALOG_SIZER_START(sz)
 	DIALOG_SIZER_ENTRY(IDC_DISASSEMBLE, DS_SizeY)
 	DIALOG_SIZER_ENTRY(IDC_BREAKPOINTS, DS_SizeY)
+	DIALOG_SIZER_ENTRY(IDC_BREAKPOINTS, DS_SizeX)
+	DIALOG_SIZER_ENTRY(IDC_JUMPTRACE, DS_SizeX)
 	DIALOG_SIZER_ENTRY(IDC_REFRESH, DS_MoveY)
 	DIALOG_SIZER_ENTRY(IDC_CLOSE, DS_MoveY)
+	DIALOG_SIZER_ENTRY(IDC_CLOSE, DS_MoveX)
 	DIALOG_SIZER_ENTRY(IDC_NEXT,  DS_MoveY)
 	DIALOG_SIZER_ENTRY(IDC_NEXT2, DS_MoveY)
 	DIALOG_SIZER_ENTRY(IDC_NEXT3, DS_MoveY)
@@ -175,6 +181,8 @@ BOOL Disassemble::OnInitDialog()
 	DIALOG_SIZER_ENTRY(IDC_GOPC, DS_MoveY)
 	DIALOG_SIZER_ENTRY(IDC_VSCROLL, DS_SizeY)
 	DIALOG_SIZER_ENTRY(IDC_VSCROLL2, DS_SizeY)
+	DIALOG_SIZER_ENTRY(IDC_VSCROLL2, DS_MoveX)
+	DIALOG_SIZER_ENTRY(IDC_VSCROLL3, DS_MoveX)
 	DIALOG_SIZER_END()
 	SetData(sz,
 	        TRUE,
@@ -187,6 +195,7 @@ BOOL Disassemble::OnInitDialog()
 	CFont *font = CFont::FromHandle((HFONT)GetStockObject(SYSTEM_FIXED_FONT));
 	m_list.SetFont(font, FALSE);
 	m_bp_list.SetFont(font, FALSE);
+	m_jumptrace_list.SetFont(font, FALSE);
 
 	for (int i = 0; i < 17; i++)
 		GetDlgItem(IDC_R0+i)->SetFont(font, FALSE);
@@ -290,6 +299,51 @@ void Disassemble::refreshBreakpoints()
 	initScrollInfo(IDC_VSCROLL2, 0, nbBreakPoints, breakPointIndex);
 }
 
+void Disassemble::refreshJumpTrace()
+{
+	if (rom == NULL)
+		return;
+
+	int  h = m_jumptrace_list.GetItemHeight(0);
+	RECT r;
+	m_jumptrace_list.GetClientRect(&r);
+	count = min((r.bottom - r.top + 1) / h, MAX_JUMPTRACE);
+
+	m_jumptrace_list.ResetContent();
+	if (!systemIsEmulating() && systemCartridgeType == 0)
+		return;
+
+	char buffer[82];
+	u32  addr = address;
+	for (int i = 1; i < count+1; ++i)
+	{
+		int idx = jumpTraceIdx - i;
+		if (idx < 0)
+		{
+			idx += MAX_JUMPTRACE;
+		}
+		u32 itemAddr = jumpTrace[idx]; // (i + jumpTraceIdx) % MAX_JUMPTRACE
+		if (itemAddr == 0)
+		{
+			continue;
+		}
+
+		if (isArm())
+		{
+			disArm(itemAddr, buffer, 3);
+		}
+		else
+		{
+			disThumb(itemAddr, buffer, 3);
+		}
+		int pos = m_jumptrace_list.InsertString(-1, buffer);
+		// Associate each item with his address
+		m_jumptrace_list.SetItemData(pos, (DWORD_PTR)itemAddr);
+	}
+
+	initScrollInfo(IDC_VSCROLL2, 0, count, jumpTraceIdx);
+}
+
 void Disassemble::refresh(bool refreshSel)
 {
 	if (rom == NULL)
@@ -371,6 +425,8 @@ void Disassemble::refresh(bool refreshSel)
 
 	// Disable/Enable the continue button
 	updateContinueButton();
+
+	refreshJumpTrace();
 }
 
 void Disassemble::update()
@@ -579,6 +635,23 @@ void Disassemble::OnLbnSelchangeBreakpoints()
 	if (idx != LB_ERR)
 	{
 		u32 addr = m_bp_list.GetItemData(idx);
+		if (addr >= 0)
+		{
+			// We go to the selected bp
+			address = addr;
+			refresh();
+		}
+	}
+}
+
+
+void Disassemble::OnLbnSelchangeJumptrace()
+{
+	// When a line in the jumptrace is selected
+	int idx = m_jumptrace_list.GetCurSel();
+	if (idx != LB_ERR)
+	{
+		u32 addr = m_jumptrace_list.GetItemData(idx);
 		if (addr >= 0)
 		{
 			// We go to the selected bp

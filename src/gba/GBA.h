@@ -44,6 +44,14 @@ extern u32 nbBreakPoints;
 extern u32 breakPoints[MAX_BREAKPOINTS];
 extern bool hasHitBP;
 
+// JumpTrace support
+#define MAX_JUMPTRACE 50
+extern u32 jumpTrace[MAX_JUMPTRACE];
+extern int jumpTraceIdx;
+extern u32 previousAddr;
+
+extern bool updateAddressHook();
+
 extern bool CPUReadGSASnapshot(const char *);
 extern bool CPUWriteGSASnapshot(const char *, const char *, const char *, const char *);
 extern bool CPUWriteBatteryFile(const char *);
