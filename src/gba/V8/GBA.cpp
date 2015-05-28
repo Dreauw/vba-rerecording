@@ -90,7 +90,7 @@ u32 nbBreakPoints = 0;
 u32 breakPoints[MAX_BREAKPOINTS];
 bool hasHitBP = false;
 
-u32 jumpTrace[MAX_JUMPTRACE];
+jumpTraceEntry jumpTrace[MAX_JUMPTRACE];
 u32 previousAddr = 0;
 int jumpTraceIdx = 0;
 
@@ -3868,7 +3868,10 @@ bool updateAddressHook()
 	{
 		// If the difference between the previous addr and the new addr is greater than 4,
 		// then that's probably because of a jump/call, so we can fill the jumptrace
-		jumpTrace[jumpTraceIdx] = previousAddr;
+		jumpTrace[jumpTraceIdx].addr = previousAddr;
+		jumpTrace[jumpTraceIdx].jmpAddr = armNextPC;
+		jumpTrace[jumpTraceIdx].armState = armState;
+
 		jumpTraceIdx = (jumpTraceIdx + 1) % MAX_JUMPTRACE;
 	}
 	previousAddr = armNextPC;

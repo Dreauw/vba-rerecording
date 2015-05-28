@@ -333,7 +333,7 @@ void Disassemble::refreshJumpTrace()
 	if (!systemIsEmulating() && systemCartridgeType == 0)
 		return;
 
-	char buffer[82];
+	char buffer[102];
 	u32  addr = address;
 	for (int i = 1; i < count+1; ++i)
 	{
@@ -342,13 +342,13 @@ void Disassemble::refreshJumpTrace()
 		{
 			idx += MAX_JUMPTRACE;
 		}
-		u32 itemAddr = jumpTrace[idx]; // (i + jumpTraceIdx) % MAX_JUMPTRACE
+		u32 itemAddr = jumpTrace[idx].addr; // (i + jumpTraceIdx) % MAX_JUMPTRACE
 		if (itemAddr == 0)
 		{
 			continue;
 		}
 
-		if (isArm())
+		if (jumpTrace[idx].armState)
 		{
 			disArm(itemAddr, buffer, 3);
 		}
@@ -356,6 +356,16 @@ void Disassemble::refreshJumpTrace()
 		{
 			disThumb(itemAddr, buffer, 3);
 		}
+
+		// Add the jump address
+		int len = strlen(buffer);
+		buffer[len] = buffer[len + 3] = ' ';
+		buffer[len + 1] = '-';
+		buffer[len + 2] = '>';
+
+		addHex(&buffer[len + 4], 32, jumpTrace[idx].jmpAddr);
+		buffer[len + 12] = 0;
+
 		int pos = m_jumptrace_list.InsertString(-1, buffer);
 		// Associate each item with his address
 		m_jumptrace_list.SetItemData(pos, (DWORD_PTR)itemAddr);
@@ -694,13 +704,13 @@ void Disassemble::OnBnClickedCopyJumptrace()
 		{
 			idx += MAX_JUMPTRACE;
 		}
-		u32 itemAddr = jumpTrace[idx]; // (i + jumpTraceIdx) % MAX_JUMPTRACE
+		u32 itemAddr = jumpTrace[idx].addr;
 		if (itemAddr == 0)
 		{
 			continue;
 		}
 
-		if (isArm())
+		if (jumpTrace[idx].armState)
 		{
 			disArm(itemAddr, line, 3);
 		}
@@ -708,6 +718,15 @@ void Disassemble::OnBnClickedCopyJumptrace()
 		{
 			disThumb(itemAddr, line, 3);
 		}
+
+		// Add the jump address
+		int len = strlen(line);
+		line[len] = line[len + 3] = ' ';
+		line[len + 1] = '-';
+		line[len + 2] = '>';
+
+		addHex(&line[len + 4], 32, jumpTrace[idx].jmpAddr);
+		line[len + 12] = 0;
 
 		result.Append(line);
 		result.AppendChar('\r');

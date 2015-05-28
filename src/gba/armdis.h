@@ -10,5 +10,6 @@
 
 int disThumb(u32 offset, char *dest, int flags);
 int disArm(u32 offset, char *dest, int flags);
+char *addHex(char *dest, int siz, u32 val);
 
 #endif // VBA_GBA_ARMDIS_H
