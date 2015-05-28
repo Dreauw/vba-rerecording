@@ -169,20 +169,18 @@ BOOL Disassemble::OnInitDialog()
 
 	DIALOG_SIZER_START(sz)
 	DIALOG_SIZER_ENTRY(IDC_DISASSEMBLE, DS_SizeY)
-	DIALOG_SIZER_ENTRY(IDC_BREAKPOINTS, DS_SizeY)
-	DIALOG_SIZER_ENTRY(IDC_BREAKPOINTS, DS_SizeX)
+	DIALOG_SIZER_ENTRY(IDC_BREAKPOINTS, DS_SizeY | DS_SizeX)
+	DIALOG_SIZER_ENTRY(IDC_BREAKPOINTS, )
 	DIALOG_SIZER_ENTRY(IDC_JUMPTRACE, DS_SizeX)
 	DIALOG_SIZER_ENTRY(IDC_REFRESH, DS_MoveY)
-	DIALOG_SIZER_ENTRY(IDC_CLOSE, DS_MoveY)
-	DIALOG_SIZER_ENTRY(IDC_CLOSE, DS_MoveX)
+	DIALOG_SIZER_ENTRY(IDC_CLOSE, DS_MoveY | DS_MoveX)
 	DIALOG_SIZER_ENTRY(IDC_NEXT,  DS_MoveY)
 	DIALOG_SIZER_ENTRY(IDC_NEXT2, DS_MoveY)
 	DIALOG_SIZER_ENTRY(IDC_NEXT3, DS_MoveY)
 	DIALOG_SIZER_ENTRY(IDC_AUTO_UPDATE, DS_MoveY)
 	DIALOG_SIZER_ENTRY(IDC_GOPC, DS_MoveY)
 	DIALOG_SIZER_ENTRY(IDC_VSCROLL, DS_SizeY)
-	DIALOG_SIZER_ENTRY(IDC_VSCROLL2, DS_SizeY)
-	DIALOG_SIZER_ENTRY(IDC_VSCROLL2, DS_MoveX)
+	DIALOG_SIZER_ENTRY(IDC_VSCROLL2, DS_SizeY | DS_MoveX)
 	DIALOG_SIZER_ENTRY(IDC_VSCROLL3, DS_MoveX)
 	DIALOG_SIZER_ENTRY(IDC_COPY_JUMPTRACE, DS_MoveX)
 	DIALOG_SIZER_END()
@@ -191,8 +189,6 @@ BOOL Disassemble::OnInitDialog()
 	        HKEY_CURRENT_USER,
 	        "Software\\Emulators\\VisualBoyAdvance\\Viewer\\DisassembleView",
 	        NULL);
-
-	initScrollInfo(IDC_VSCROLL, 0, 100, 50);
 
 	CFont *font = CFont::FromHandle((HFONT)GetStockObject(SYSTEM_FIXED_FONT));
 	m_list.SetFont(font, FALSE);
@@ -207,6 +203,10 @@ BOOL Disassemble::OnInitDialog()
 	m_address.LimitText(8);
 	refresh();
 	refreshBreakpoints();
+
+	initScrollInfo(IDC_VSCROLL, 0, 100, 50);
+	initScrollInfo(IDC_VSCROLL2, 0, nbBreakPoints, 0);
+	initScrollInfo(IDC_VSCROLL3, 0, MAX_JUMPTRACE, 0);
 
 	return TRUE; // return TRUE unless you set the focus to a control
 	             // EXCEPTION: OCX Property Pages should return FALSE
@@ -239,6 +239,24 @@ void Disassemble::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar*pScrollBar)
 
 		refreshBreakpoints();
 		initScrollInfo(IDC_VSCROLL2, 0, nbBreakPoints, breakPointIndex);
+	} else if (pScrollBar == GetDlgItem(IDC_VSCROLL3))
+	{
+		// Scrollbar of the jumptrace
+		if ((nSBCode == SB_THUMBPOSITION || nSBCode == SB_THUMBTRACK))
+		{
+			jumpTraceIndex = nPos;
+		}
+		else if (nSBCode == SB_LINEDOWN && jumpTraceIndex < m_jumptrace_list.GetCount())
+		{
+			++jumpTraceIndex;
+		}
+		else if (nSBCode == SB_LINEUP && jumpTraceIndex > 0)
+		{
+			--jumpTraceIndex;
+		}
+
+		refreshJumpTrace();
+		initScrollInfo(IDC_VSCROLL3, 0, MAX_JUMPTRACE, jumpTraceIndex);
 	}
 	else 
 	{
@@ -319,7 +337,7 @@ void Disassemble::refreshJumpTrace()
 	u32  addr = address;
 	for (int i = 1; i < count+1; ++i)
 	{
-		int idx = jumpTraceIdx - i;
+		int idx = jumpTraceIdx - i - jumpTraceIndex;
 		if (idx < 0)
 		{
 			idx += MAX_JUMPTRACE;
@@ -667,12 +685,30 @@ void Disassemble::OnLbnSelchangeJumptrace()
 void Disassemble::OnBnClickedCopyJumptrace()
 {
 	// Copy all the jumptrace into the clipboard
-	int size = m_jumptrace_list.GetCount();
 	char line[82];
 	CString result;
-	for (int i = 0; i < size; ++i)
+	for (int i = 1; i < MAX_JUMPTRACE + 1; ++i)
 	{
-		m_jumptrace_list.GetText(i, line);
+		int idx = jumpTraceIdx - i;
+		if (idx < 0)
+		{
+			idx += MAX_JUMPTRACE;
+		}
+		u32 itemAddr = jumpTrace[idx]; // (i + jumpTraceIdx) % MAX_JUMPTRACE
+		if (itemAddr == 0)
+		{
+			continue;
+		}
+
+		if (isArm())
+		{
+			disArm(itemAddr, line, 3);
+		}
+		else
+		{
+			disThumb(itemAddr, line, 3);
+		}
+
 		result.Append(line);
 		result.AppendChar('\r');
 		result.AppendChar('\n');
