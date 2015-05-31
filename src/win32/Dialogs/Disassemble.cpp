@@ -225,11 +225,16 @@ void Disassemble::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar*pScrollBar)
 	// ScrollBar of the breakpoints list
 	if (pScrollBar == GetDlgItem(IDC_VSCROLL2))
 	{
+		int  h = m_bp_list.GetItemHeight(0);
+		RECT r;
+		m_bp_list.GetClientRect(&r);
+		count = min((r.bottom - r.top + 1) / h, (int)(nbBreakPoints - breakPointIndex));
+
 		if ((nSBCode == SB_THUMBPOSITION || nSBCode == SB_THUMBTRACK))
 		{
 			breakPointIndex = nPos;
 		}
-		else if (nSBCode == SB_LINEDOWN && breakPointIndex < nbBreakPoints)
+		else if (nSBCode == SB_LINEDOWN && breakPointIndex + count < (int)nbBreakPoints)
 		{
 			++breakPointIndex;
 		}

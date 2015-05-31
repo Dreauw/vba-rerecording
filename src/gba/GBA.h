@@ -46,7 +46,7 @@ extern bool hasHitBP;
 
 // JumpTrace support
 #define MAX_JUMPTRACE 50
-extern struct jumpTraceEntry
+struct jumpTraceEntry
 {
 	u32 addr;
 	u32 jmpAddr;
