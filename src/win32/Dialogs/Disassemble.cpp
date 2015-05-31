@@ -123,17 +123,18 @@ void Disassemble::OnGo()
 
 void Disassemble::OnGopc()
 {
-	if (armState)
-		address = armNextPC - 16;
-	else
-		address = armNextPC - 8;
+	int  h = m_list.GetItemHeight(0);
+	RECT r;
+	m_list.GetClientRect(&r);
+	count = ((r.bottom - r.top + 1) / h)/2;
+
+	address = armNextPC - count * (isArm() ? 4 : 2);
 
 	refresh();
 }
 
 void Disassemble::OnNext()
 {
-	//CPULoop(1);
 	CPUExecuteOpcodes(1, 1);
 
 	refreshPosition();
