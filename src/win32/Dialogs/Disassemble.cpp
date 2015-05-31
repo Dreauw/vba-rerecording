@@ -607,8 +607,9 @@ void Disassemble::copySelectedAddress()
 		u32 addr = m_list.GetItemData(idx);
 		if (addr >= 0)
 		{
-			char buffer[82];
-			disThumb(addr, buffer, DIS_VIEW_ADDRESS);
+			char buffer[9];
+			addHex(buffer, 32, addr);
+			buffer[8] = 0;
 			setClipboardText(buffer);
 		}
 	}
