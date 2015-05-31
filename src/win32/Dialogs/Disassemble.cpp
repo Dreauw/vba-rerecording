@@ -73,6 +73,7 @@ ON_WM_CONTEXTMENU()
 ON_LBN_SELCHANGE(IDC_BREAKPOINTS, &Disassemble::OnLbnSelchangeBreakpoints)
 ON_LBN_SELCHANGE(IDC_JUMPTRACE, &Disassemble::OnLbnSelchangeJumptrace)
 ON_BN_CLICKED(IDC_COPY_JUMPTRACE, &Disassemble::OnBnClickedCopyJumptrace)
+ON_BN_CLICKED(IDC_COPY_REGISTERS, &Disassemble::OnBnClickedCopyRegisters)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -735,4 +736,20 @@ void Disassemble::OnBnClickedCopyJumptrace()
 	}
 	result.ReleaseBuffer();
 	setClipboardText(result.GetBuffer(0));
+}
+
+
+void Disassemble::OnBnClickedCopyRegisters()
+{
+	char buffer[17 * 20];
+	int pos = 0;
+	for (int i = 0; i < 17; i++)
+	{
+		pos += sprintf(&buffer[pos], "R%d:\t%08x\r\n", i, reg[i].I);
+	}
+
+	buffer[pos] = 0;
+
+	setClipboardText(buffer);
+
 }

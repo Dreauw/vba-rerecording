@@ -370,9 +370,10 @@
 #define IDC_REFRESH2                    1127
 #define IDC_CLOSE                       1128
 #define IDC_COLOR                       1129
-#define IDC_CLOSE2                      1129
 #define IDC_COPY_JUMPTRACE              1129
 #define IDC_SAVE_BG                     1130
+#define IDC_COPY_JUMPTRACE2             1130
+#define IDC_COPY_REGISTERS              1130
 #define IDC_SAVE_OBJ                    1131
 #define IDC_MAP_VIEW_ZOOM               1132
 #define IDC_VIEWER                      1133

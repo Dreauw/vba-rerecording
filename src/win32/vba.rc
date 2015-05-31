@@ -665,49 +665,49 @@ BEGIN
     PUSHBUTTON      "Refresh",IDC_REFRESH,64,204,50,14
     PUSHBUTTON      "(F6) Next Instruction",IDC_NEXT,145,204,69,14
     PUSHBUTTON      "Close",IDC_CLOSE,527,204,50,14
-    LTEXT           "R0:",IDC_STATIC,309,7,18,8
-    LTEXT           "R1:",IDC_STATIC,309,15,18,8
-    LTEXT           "R2:",IDC_STATIC,309,23,18,8
-    LTEXT           "R3:",IDC_STATIC,309,31,18,8
-    LTEXT           "R4:",IDC_STATIC,309,39,18,8
-    LTEXT           "R5:",IDC_STATIC,309,47,18,8
-    LTEXT           "R6:",IDC_STATIC,309,55,18,8
-    LTEXT           "R7:",IDC_STATIC,309,63,18,8
-    LTEXT           "",IDC_R0,332,7,52,8
-    LTEXT           "",IDC_R1,332,15,52,8
-    LTEXT           "",IDC_R2,332,23,52,8
-    LTEXT           "",IDC_R3,332,31,52,8
-    LTEXT           "",IDC_R4,332,39,52,8
-    LTEXT           "",IDC_R5,332,47,52,8
-    LTEXT           "",IDC_R6,332,55,52,8
-    LTEXT           "",IDC_R7,332,63,52,8
-    LTEXT           "",IDC_R8,332,71,52,8
-    LTEXT           "",IDC_R9,332,79,52,8
-    LTEXT           "",IDC_R10,332,87,52,8
-    LTEXT           "",IDC_R11,332,95,52,8
-    LTEXT           "",IDC_R12,332,103,52,8
-    LTEXT           "",IDC_R13,332,111,52,8
-    LTEXT           "",IDC_R14,332,119,52,8
-    LTEXT           "",IDC_R15,332,127,52,8
-    LTEXT           "R8:",IDC_STATIC,309,71,18,8
-    LTEXT           "R9:",IDC_STATIC,309,79,18,8
-    LTEXT           "R10:",IDC_STATIC,309,87,18,8
-    LTEXT           "R11:",IDC_STATIC,309,95,18,8
-    LTEXT           "R12:",IDC_STATIC,309,103,18,8
-    LTEXT           "R13:",IDC_STATIC,309,111,18,8
-    LTEXT           "R14:",IDC_STATIC,309,119,18,8
-    LTEXT           "R15:",IDC_STATIC,309,127,18,8
-    LTEXT           "",IDC_R16,332,135,52,8
-    LTEXT           "R16:",IDC_STATIC,309,135,20,8
-    CONTROL         "N",IDC_N,"Button",BS_AUTOCHECKBOX | WS_DISABLED | WS_TABSTOP,309,146,21,10
-    CONTROL         "Z",IDC_Z,"Button",BS_AUTOCHECKBOX | WS_DISABLED | WS_TABSTOP,309,156,21,10
-    CONTROL         "C",IDC_C,"Button",BS_AUTOCHECKBOX | WS_DISABLED | WS_TABSTOP,309,166,21,10
-    CONTROL         "V",IDC_V,"Button",BS_AUTOCHECKBOX | WS_DISABLED | WS_TABSTOP,309,176,21,10
-    CONTROL         "F",IDC_F,"Button",BS_AUTOCHECKBOX | WS_DISABLED | WS_TABSTOP,342,156,20,10
-    CONTROL         "I",IDC_I,"Button",BS_AUTOCHECKBOX | WS_DISABLED | WS_TABSTOP,342,146,18,10
-    CONTROL         "T",IDC_T,"Button",BS_AUTOCHECKBOX | WS_DISABLED | WS_TABSTOP,342,166,21,10
-    LTEXT           "Mode:",IDC_STATIC,341,176,21,8
-    LTEXT           "",IDC_MODE,364,176,20,8
+    LTEXT           "R0:",IDC_STATIC,300,22,18,8
+    LTEXT           "R1:",IDC_STATIC,300,30,18,8
+    LTEXT           "R2:",IDC_STATIC,300,38,18,8
+    LTEXT           "R3:",IDC_STATIC,300,46,18,8
+    LTEXT           "R4:",IDC_STATIC,300,54,18,8
+    LTEXT           "R5:",IDC_STATIC,300,62,18,8
+    LTEXT           "R6:",IDC_STATIC,300,70,18,8
+    LTEXT           "R7:",IDC_STATIC,300,78,18,8
+    LTEXT           "",IDC_R0,323,22,52,8
+    LTEXT           "",IDC_R1,323,30,52,8
+    LTEXT           "",IDC_R2,323,38,52,8
+    LTEXT           "",IDC_R3,323,46,52,8
+    LTEXT           "",IDC_R4,323,54,52,8
+    LTEXT           "",IDC_R5,323,62,52,8
+    LTEXT           "",IDC_R6,323,70,52,8
+    LTEXT           "",IDC_R7,323,78,52,8
+    LTEXT           "",IDC_R8,323,86,52,8
+    LTEXT           "",IDC_R9,323,94,52,8
+    LTEXT           "",IDC_R10,323,102,52,8
+    LTEXT           "",IDC_R11,323,110,52,8
+    LTEXT           "",IDC_R12,323,118,52,8
+    LTEXT           "",IDC_R13,323,126,52,8
+    LTEXT           "",IDC_R14,323,134,52,8
+    LTEXT           "",IDC_R15,323,142,52,8
+    LTEXT           "R8:",IDC_STATIC,300,86,18,8
+    LTEXT           "R9:",IDC_STATIC,300,94,18,8
+    LTEXT           "R10:",IDC_STATIC,300,102,18,8
+    LTEXT           "R11:",IDC_STATIC,300,110,18,8
+    LTEXT           "R12:",IDC_STATIC,300,118,18,8
+    LTEXT           "R13:",IDC_STATIC,300,126,18,8
+    LTEXT           "R14:",IDC_STATIC,300,134,18,8
+    LTEXT           "R15:",IDC_STATIC,300,142,18,8
+    LTEXT           "",IDC_R16,323,150,52,8
+    LTEXT           "R16:",IDC_STATIC,300,150,20,8
+    CONTROL         "N",IDC_N,"Button",BS_AUTOCHECKBOX | WS_DISABLED | WS_TABSTOP,300,161,21,10
+    CONTROL         "Z",IDC_Z,"Button",BS_AUTOCHECKBOX | WS_DISABLED | WS_TABSTOP,300,171,21,10
+    CONTROL         "C",IDC_C,"Button",BS_AUTOCHECKBOX | WS_DISABLED | WS_TABSTOP,300,181,21,10
+    CONTROL         "V",IDC_V,"Button",BS_AUTOCHECKBOX | WS_DISABLED | WS_TABSTOP,300,191,21,10
+    CONTROL         "F",IDC_F,"Button",BS_AUTOCHECKBOX | WS_DISABLED | WS_TABSTOP,333,171,20,10
+    CONTROL         "I",IDC_I,"Button",BS_AUTOCHECKBOX | WS_DISABLED | WS_TABSTOP,333,161,18,10
+    CONTROL         "T",IDC_T,"Button",BS_AUTOCHECKBOX | WS_DISABLED | WS_TABSTOP,333,181,21,10
+    LTEXT           "Mode:",IDC_STATIC,332,191,21,8
+    LTEXT           "",IDC_MODE,355,191,20,8
     SCROLLBAR       IDC_VSCROLL,283,25,10,161,SBS_VERT
     PUSHBUTTON      "Goto R15",IDC_GOPC,7,204,50,14
     PUSHBUTTON      "(F7) Next Frame",IDC_NEXT2,219,204,64,14
@@ -719,6 +719,8 @@ BEGIN
     LTEXT           "JumpTrace",IDC_STATIC,391,11,43,8
     SCROLLBAR       IDC_VSCROLL3,567,17,10,78,SBS_VERT
     PUSHBUTTON      "Copy",IDC_COPY_JUMPTRACE,517,7,50,14
+    LTEXT           "Registers",IDC_STATIC,297,12,43,8
+    PUSHBUTTON      "Copy",IDC_COPY_REGISTERS,335,7,50,14
 END
 
 IDD_GDB_PORT DIALOG 0, 0, 186, 51

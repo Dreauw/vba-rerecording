@@ -89,6 +89,7 @@ public:
 	afx_msg void OnLbnSelchangeBreakpoints();
 	afx_msg void OnLbnSelchangeJumptrace();
 	afx_msg void OnBnClickedCopyJumptrace();
+	afx_msg void OnBnClickedCopyRegisters();
 };
 
 //{{AFX_INSERT_LOCATION}}
